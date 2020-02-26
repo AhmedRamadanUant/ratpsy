@@ -1,7 +1,7 @@
 function dat = Behavior_Datapaths(dataPath,verbose)
 % USAGE: dat = Behavior_Datapaths(dataPath,verbose)
 %
-% pathBehavior : full path to the raw data folder without / at the end
+% dataPath : full path to the raw data folder without / at the end
 
 % Note: always use forward slashes (/) instead of backslashes (/) in path
 % definitions as they work in both windows and linux platforms.
@@ -12,7 +12,7 @@ end
 
 %%% PATHS THAT POTENTIALLY NEED TO BE UPDATED %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 if nargin<1
-    dataPath=' C:Neuroscience/Writing/00Code-Data/';
+    dataPath='/Users/gkeliris/Documents/DATA/Ahmed/Feb2020';
 end
 
 % ANIMAL IDs
