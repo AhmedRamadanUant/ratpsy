@@ -12,7 +12,7 @@ end
 
 %%% PATHS THAT POTENTIALLY NEED TO BE UPDATED %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 if nargin<1
-    dataPath='C:Neuroscience/Writing/00Code-Data/';
+    dataPath=' C:Neuroscience/Writing/00Code-Data/';
 end
 
 % ANIMAL IDs
