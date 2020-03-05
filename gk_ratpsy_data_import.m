@@ -1,122 +1,75 @@
-function data = gk_ratpsy_data_import(fileIn,ratNum)
-% USAGE: data = gk_ratpsy_data_import(fileIn,[ratNum])
+function data = gk_ratpsy_data_import(info,ratNum)
+% USAGE: data = gk_ratpsy_data_import(info,[ratNum])
 %
 % INPUT:
-% - fileIn      :the path of the datafile
-% - ratNum       :[optional default=Nan] a number identifier the rat
+% - info        :the matlab structure returned from gk_pyControl_read
+% - ratNum      :[optional default=Nan] a number identifier the rat
 %
 % OUTPUT:
 % - data        : a table with the relevant data
-% - N           : some performance numbers for psychometric plots
 %
-% GAK
+% v3.0 GAK 4 Mar 2020
 
 if nargin==1
     ratID=nan;
 end
-fid=fopen(fileIn);
-% first skip the first 5 lines and then read the events to be sure the numbers are correct
-tmp=textscan(fid,'S { %[^}]','Headerlines',5);
-S=textscan(tmp{1}{1},'%s %d','delimiter',':,');
-tmp=textscan(fid,'E { %[^}]','Headerlines',1);
-E=textscan(tmp{1}{1},'%s %d','delimiter',':,');
 
-% The following skips the first 2 lines, then reads the whole file in 3
-% columns (a character, a double and a string) skipping the rest of things
-% if some columns have more that 3 fields
-t=textscan(fid,'%c %d %s %*[^\n]','HeaderLines',2);
-
-% find the lines starting with D as they only have a number in third column
-% and this makes things easier to look for
-Ds=find(t{1}=='D');
-events=cellfun(@str2num,t{3}(Ds));
-eventTimes=t{2}(Ds);
-trialStarts=find(events==1); % this is the beginning of trials (we ignore repeats:3)
-trialNumbers=1:numel(trialStarts);
-currTrial=find(events==2);
-trialStartTimes=eventTimes(trialStarts);
-curTrialTimes=eventTimes(currTrial);
-tTypesStr=t{3}(Ds(trialStarts)+4); % TrialTypes are always 4 lines further than trial starts
-trialType=cellfun(@(x) sscanf(x,'trialType:%d'), tTypesStr)+1; % read the number and add 1
-initPokeHold=find(events==3);
-curTrialStr=t{3}(Ds(initPokeHold)+1); 
-curTrialNumber=cellfun(@(x) sscanf(x,'n_trials:%d'), curTrialStr)
-
-% for  i=1:numel(currTrial)
-%     curTrialNumber(i)=max(find(trialStartTimes<curTrialTimes(i)));
-% end
+% define reference events and prints via E_P_cells (i.e. {{Es},{Ps}}
+trialStart={{},{'correct'}};
+trialEnd={{'ITI','aborted_fixation','aborted_response'},{}};
+trialNum={{},{'n_trials'}};
+trialPWL={{},{'pW_L'}};
+trialPWR={{},{'pW_R'}};
+trialType={{},{'pW_L'}};
+trialResponse={{},{'n_correct_left','n_correct_right','n_wrong_left',...
+    'n_wrong_right','n_aborted_fixation','n_aborted_response'}};
+trialSuccess={{'left_reward','right_reward'},{}};
+trialWrong={{},{'n_wrong_left','n_wrong_right'}};
+trialAbort={{},{'n_aborted_fixation','n_aborted_response'}};
+trialStimON={{'display_stimulus'},{}};
+trialActive={{'reward_available'},{}};
+trialAbortResponse={{},{'n_aborted_response'}};
 
 
-
-centerPokes=find(events==11);
-centerPokeTimes=eventTimes(centerPokes);
-stimulusOn=find(events==6);
-stimulusOnTimes=eventTimes(stimulusOn);
-leftResp=find(events==13);
-leftRespTimes=eventTimes(leftResp);
-rightResp=find(events==12);
-rightRespTimes=eventTimes(rightResp);
-anyResp=find(events==12 | events==13);
-anyRespTimes=eventTimes(anyResp);
-trialEnds=find(events==8 | events==10);
-trialEndTimes=eventTimes(trialEnds);
-
-for ti=1:numel(trialStarts)-1
-    if ti<numel(stimulusOn)
-        preMature(ti,1)=numel(find(centerPokeTimes>trialEndTimes(ti) & centerPokeTimes<trialStartTimes(ti+1)));
-    end
-    firstResp=min(find(anyRespTimes>stimulusOnTimes(ti) & anyRespTimes<trialEndTimes(ti)));
-    if  ~isempty(firstResp)
-        firstRespTime=anyRespTimes(firstResp);
-        reactionTime(ti,1)=firstRespTime-stimulusOnTimes(ti);
-    else
-        reactionTime(ti,1)=inf;
-    end
-end
-%figure;
-%hold on; histogram(reactionTime(1:end-1),0:10:1000)
-
-% Look for the outcome to define the response and correct variables
-wL=[cellfun(@(x) ~isempty(strfind(x,'n_wrong_L')), t{3},'UniformOutput',false)];
-respR_w=find([wL{:}]);
-wR=[cellfun(@(x) ~isempty(strfind(x,'n_wrong_R')), t{3},'UniformOutput',false)];
-respL_w=find([wR{:}]);
-cL=[cellfun(@(x) ~isempty(strfind(x,'n_correct_L')), t{3},'UniformOutput',false)];
-respL_c=find([cL{:}]);
-cR=[cellfun(@(x) ~isempty(strfind(x,'n_correct_R')), t{3},'UniformOutput',false)];
-respR_c=find([cR{:}]);
-
-respo=sortrows([[respL_c' 1*ones(length(respL_c),1)];...
-                   [respR_c' 2*ones(length(respR_c),1)];...
-                   [respL_w' 1*ones(length(respL_w),1)];...
-                   [respR_w' 2*ones(length(respR_w),1)]]);
-corre=sortrows([[respL_c' ones(length(respL_c),1)];...
-                   [respR_c' ones(length(respR_c),1)];...
-                   [respL_w' zeros(length(respL_w),1)];...
-                   [respR_w' zeros(length(respR_w),1)]]);
-
-response=respo(1:numel(trialStarts)-1,2);
-correct=corre(1:numel(trialStarts)-1,2);
-trialType=trialType(1:length(response));
-stimOnTime=stimulusOnTimes(1:numel(trialStarts)-1);
-trialStart=trialStartTimes(1:numel(trialStarts)-1);
-trialEnd=trialEndTimes(1:numel(trialStarts)-1);
-ratNumber=repmat(ratNum,numel(trialStarts)-1,1);
-%%%%%
-N.condsort=[1:7 12:-1:8];
-N.stimulus=[-60:10:-20 0 0 60:-10:20]/60; % Michelson contrast
-for cc=[N.condsort]
-    stimType(trialType(1:numel(trialStarts)-1)==cc,1)=N.stimulus(cc);
-end
-
-if numel(preMature)<numel(trialStarts)-1
-    preMature(end+1:numel(trialStarts)-1)=0;
-end
-% Create that data table
-data=table(trialType,stimType,response,correct,stimOnTime,reactionTime,trialStart,trialEnd,preMature,ratNumber);
+%%
+trStart=gk_pyControl_collapse_events(info,trialStart);
+trEnd=gk_pyControl_collapse_events(info,trialEnd,trStart);
+trNum=gk_pyControl_collapse_events(info,trialNum,trStart,trEnd);
+trType=gk_pyControl_collapse_events(info,trialType,trStart,trEnd);
+trResponse=gk_pyControl_collapse_events(info,trialResponse,trStart,trEnd);
+trPWL=gk_pyControl_collapse_events(info,trialPWL,trStart,trEnd);
+trPWR=gk_pyControl_collapse_events(info,trialPWR,trStart,trEnd);
+trSuccess=gk_pyControl_collapse_events(info,trialSuccess,trStart,trEnd);
+trWrong=gk_pyControl_collapse_events(info,trialWrong,trStart,trEnd);
+trAbort=gk_pyControl_collapse_events(info,trialAbort,trStart,trEnd);
+trAbortResponse=gk_pyControl_collapse_events(info,trialAbortResponse,trStart,trEnd);
+trStimON=gk_pyControl_collapse_events(info,trialStimON,trStart,trEnd);
+trActive=gk_pyControl_collapse_events(info,trialActive,trStart,trEnd);
+trActiveMove=gk_pyControl_subtract_events(trActive,trAbortResponse);
+trSidePoke=gk_pyControl_subtract_events(trResponse,trAbort);
 
 
+[stimRT, trials1]=gk_pyControl_timediff(trActive,trStimON);
+[moveRT, trials2]=gk_pyControl_timediff(trSidePoke,trActiveMove);
 
+
+%% Define the variables to enter in the data table
+trialNumber=trNum.trialNum;
+trialTypes = gk_pyControl_getCategories(trType,{'C10','C1','C2','C3','C4','C5','C6','C7','C8','C9'});
+pw_L = gk_pyControl_getCategories(trPWL);
+pw_R = gk_pyControl_getCategories(trPWR);
+[~,responses]=gk_pyControl_getCategories(trResponse,[],{'aF','aR','L','R','L','R'});
+[~,outcome]=gk_pyControl_getCategories(trResponse,[],{'abort','abort','correct','correct','wrong','wrong'});
+
+RT_stim=NaN(trialNumber(end),1); RT_stim(trials1)=stimRT;
+RT_move=NaN(trialNumber(end),1); RT_move(trials2)=moveRT;
+
+ratNumber=repmat(ratNum,numel(trialNumber),1);
+
+%% Create that data table
+data=table(trialNumber,trialTypes,pw_L,pw_R,responses,outcome,RT_stim,RT_move,ratNumber);
+
+%data=table(trialType,stimType,response,correct,stimOnTime,reactionTime,trialStart,trialEnd,preMature,ratNumber);
 
 
 

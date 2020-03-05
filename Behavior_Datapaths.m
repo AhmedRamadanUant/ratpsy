@@ -14,6 +14,7 @@ end
 if nargin<1
     dataPath='/Users/gkeliris/Documents/DATA/Ahmed/Feb2020';
 end
+dat.dataPath=dataPath;
 
 % ANIMAL IDs
 dat.ratIDs={'rat3907L','rat3908LR','rat3910LR','rat3911L','rat3912LR','rat3913L','rat3914LR','rat3915L','rat3916LR',...

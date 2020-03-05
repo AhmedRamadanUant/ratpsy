@@ -1,5 +1,5 @@
 % be in code directory
-d=Behavior_Datapaths_070220('/Users/gkeliris/Documents/DATA/Ahmed/Feb2020',1);
+d=Behavior_Datapaths('/Users/gkeliris/Documents/DATA/Ahmed/Feb2020',0);
 %d=Behavior_Datapaths_ahmed('/Users/gkeliris/Documents/DATA/Ahmed30June2019/Ahmed_psychophysics/Ahmed/Data_perTimePoint',1);
 %d=Behavior_Datapaths_ahmed('/Volumes/Bil04_DataDisk2/Lore/Ahmed-BehavioralTask/Ahmed_psychophysics/Ahmed/Data_perTimePoint',1);
 
@@ -9,11 +9,12 @@ for rat=[d.ratIDs]
     for ti=[{timepoints{2:end}}]
         if isfield(d.(ti{1}),rat{1})
         	fprintf('\n\nPROCESSING:%s, %s\n',rat{1},ti{1});
-            data.(ti{1}).(rat{1})=gk_ratpsy_data_import_new(d.(ti{1}).(rat{1}),str2num(rat{1}(7)));
+            info.(ti{1}).(rat{1})=gk_pyControl_read(d.(ti{1}).(rat{1}));
+            data.(ti{1}).(rat{1})=gk_ratpsy_data_import(info.(ti{1}).(rat{1}),str2num(rat{1}(6:7)));
         end
     end
 end
-save('data','data');
+save(fullfile(d.dataPath,'Analysis','data'),'data');
 
 %% LOAD ALL DATA (after 1st time)
 load data;
