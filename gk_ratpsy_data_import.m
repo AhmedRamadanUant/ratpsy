@@ -14,6 +14,7 @@ if nargin==1
     ratID=nan;
 end
 
+
 % define reference events and prints via E_P_cells (i.e. {{Es},{Ps}}
 trialStart={{},{'correct'}};
 trialEnd={{'ITI','aborted_fixation','aborted_response'},{}};
