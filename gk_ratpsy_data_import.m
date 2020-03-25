@@ -11,14 +11,14 @@ function data = gk_ratpsy_data_import(info,ratNum)
 % v3.0 GAK 4 Mar 2020
 
 if nargin==1
-    ratID=nan;
+    ratNum=nan;
 end
 
 
 % define reference events and prints via E_P_cells (i.e. {{Es},{Ps}}
 trialStart={{},{'correct'}};
 trialEnd={{'ITI','aborted_fixation','aborted_response'},{}};
-trialNum={{},{'n_trials'}};
+%trialNum={{},{'n_trials'}};
 trialPWL={{},{'pW_L'}};
 trialPWR={{},{'pW_R'}};
 trialType={{},{'pW_L'}};
@@ -35,7 +35,7 @@ trialAbortResponse={{},{'n_aborted_response'}};
 %%
 trStart=gk_pyControl_collapse_events(info,trialStart);
 trEnd=gk_pyControl_collapse_events(info,trialEnd,trStart);
-trNum=gk_pyControl_collapse_events(info,trialNum,trStart,trEnd);
+%trNum=gk_pyControl_collapse_events(info,trialNum,trStart,trEnd);
 trType=gk_pyControl_collapse_events(info,trialType,trStart,trEnd);
 trResponse=gk_pyControl_collapse_events(info,trialResponse,trStart,trEnd);
 trPWL=gk_pyControl_collapse_events(info,trialPWL,trStart,trEnd);
@@ -55,12 +55,17 @@ trSidePoke=gk_pyControl_subtract_events(trResponse,trAbort);
 
 
 %% Define the variables to enter in the data table
-trialNumber=trNum.trialNum;
+trialNumber=trEnd.trialNum;
 trialTypes = gk_pyControl_getCategories(trType,{'C10','C1','C2','C3','C4','C5','C6','C7','C8','C9'});
 pw_L = gk_pyControl_getCategories(trPWL);
 pw_R = gk_pyControl_getCategories(trPWR);
-[~,responses]=gk_pyControl_getCategories(trResponse,[],{'aF','aR','L','R','L','R'});
-[~,outcome]=gk_pyControl_getCategories(trResponse,[],{'abort','abort','correct','correct','wrong','wrong'});
+if isempty(trAbortResponse.times)
+    [~,responses]=gk_pyControl_getCategories(trResponse,[],{'aF','L','R','L','R'});
+    [~,outcome]=gk_pyControl_getCategories(trResponse,[],{'abort','correct','correct','wrong','wrong'});
+else
+    [~,responses]=gk_pyControl_getCategories(trResponse,[],{'aF','aR','L','R','L','R'});
+    [~,outcome]=gk_pyControl_getCategories(trResponse,[],{'abort','abort','correct','correct','wrong','wrong'});
+end
 
 RT_stim=NaN(trialNumber(end),1); RT_stim(trials1)=stimRT;
 RT_move=NaN(trialNumber(end),1); RT_move(trials2)=moveRT;

@@ -45,8 +45,8 @@ t=textscan(fid,'%c %d %s %s %*[^\n]','HeaderLines',2);
 % find the lines starting with D as they only have a number in third column
 % and this makes things easier to look for
 Ds=find(t{1}=='D');
-events=cellfun(@str2num,t{3}(Ds));
 eventTimes=t{2}(Ds);
+events=cellfun(@str2num,t{3}(Ds));
 
 % Get the data (D_index, times) for each event
 for i=1:numel(info.events.names)
@@ -57,10 +57,10 @@ end
 
 Ps=find(t{1}=='P');
 printTimes=t{2}(Ps);
-extraprints=find(~cellfun(@isempty,t{4})); %this is because some lines in P have 4 columns
+extraprints=find(~cellfun(@isempty,t{4}(Ps))); %this is because some lines in P have 4 columns
 % below we attach the 4th column to the 3rd to make things more easy for
 % later processintg
-t{3}(extraprints)=cellfun(@(x,y) cat(2,x,y),t{3}(extraprints),t{4}(extraprints),'UniformOutput',false);
+t{3}(Ps(extraprints))=cellfun(@(x,y) cat(2,x,y),t{3}(Ps(extraprints)),t{4}(Ps(extraprints)),'UniformOutput',false);
 prints=t{3}(Ps);
 % now separate the printed things in name:value pairs
 print_pairs=cellfun(@(x) textscan(x,'%s','delimiter',':'),prints,'UniformOutput',false);
@@ -75,6 +75,21 @@ for i=1:numel(info.prints.names)
     info.prints.data.(info.prints.names{i}).idx=Ps(P_idx);
     info.prints.data.(info.prints.names{i}).values=print_values(P_idx);
     info.prints.data.(info.prints.names{i}).times=printTimes(P_idx);
+end
+
+Vs=find(t{1}=='V');
+vTimes=t{2}(Vs);
+Vprints=t{3}(Vs);
+Vnums=t{4}(Vs);
+
+Vnames=categorical(Vprints);
+Vvalues=categorical(Vnums);
+info.Vs.names=categories(Vnames);
+for i=1:numel(info.Vs.names)
+    V_idx=find(Vnames==info.Vs.names{i});
+    info.Vs.data.(info.Vs.names{i}).idx=Vs(V_idx);
+    info.Vs.data.(info.Vs.names{i}).values=Vvalues(V_idx);
+    info.Vs.data.(info.Vs.names{i}).times=vTimes(V_idx);
 end
 
 

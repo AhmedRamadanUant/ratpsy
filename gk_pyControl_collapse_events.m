@@ -49,6 +49,7 @@ end
 clpsEvent.idx=idx(I);
 clpsEvent.values={values{I}}';
 clpsEvent.types={types{I}}';
+clpsEvent.trialNum=[];
 
 if ~isempty(trStartEvent)
     clpsEvent=gk_pyControl_getEventTrialNum(trStartEvent,clpsEvent);

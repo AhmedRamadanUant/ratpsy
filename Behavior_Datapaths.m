@@ -78,8 +78,9 @@ dat.pre7.(dat.ratIDs{5})=cat(2,dataPath,datafolders{5},'/3912LR-2020-02-06-14242
 
 
 %% Rat_13
-dat.pre1.(dat.ratIDs{6})=cat(2,dataPath,datafolders{6},'/3913L-2020-01-15-102530.txt');
-dat.pre2.(dat.ratIDs{6})=cat(2,dataPath,datafolders{6},'/3913L-2020-01-16-112935.txt');
+%dat.pre1.(dat.ratIDs{6})=cat(2,dataPath,datafolders{6},'/3913L-2020-01-15-102530.txt');
+% ONLY 8 conditions?
+%dat.pre2.(dat.ratIDs{6})=cat(2,dataPath,datafolders{6},'/3913L-2020-01-16-112935.txt');
 dat.pre3.(dat.ratIDs{6})=cat(2,dataPath,datafolders{6},'/3913L-2020-01-23-114935.txt');
 dat.pre4.(dat.ratIDs{6})=cat(2,dataPath,datafolders{6},'/3913L-2020-01-30-134021.txt');
 dat.pre5.(dat.ratIDs{6})=cat(2,dataPath,datafolders{6},'/3913L-2020-02-05-123033.txt');
@@ -98,7 +99,7 @@ dat.pre7.(dat.ratIDs{7})=cat(2,dataPath,datafolders{7},'/3914LR-2020-02-06-14242
 
 
 %% Rat_15
-dat.pre1.(dat.ratIDs{8})=cat(2,dataPath,datafolders{8},'/3915L-2020-01-21-150547.txt');
+%dat.pre1.(dat.ratIDs{8})=cat(2,dataPath,datafolders{8},'/3915L-2020-01-21-150547.txt');
 dat.pre2.(dat.ratIDs{8})=cat(2,dataPath,datafolders{8},'/3915L-2020-01-16-132652.txt');
 dat.pre3.(dat.ratIDs{8})=cat(2,dataPath,datafolders{8},'/3915L-2020-01-22-123551.txt');
 dat.pre4.(dat.ratIDs{8})=cat(2,dataPath,datafolders{8},'/3915L-2020-01-23-130438.txt');
@@ -116,8 +117,8 @@ dat.pre5.(dat.ratIDs{9})=cat(2,dataPath,datafolders{9},'/3916LR-2020-01-30-15183
 dat.pre6.(dat.ratIDs{9})=cat(2,dataPath,datafolders{9},'/3916LR-2020-02-05-141948.txt');
 
 %% Rat_17
-dat.pre1.(dat.ratIDs{10})=cat(2,dataPath,datafolders{10},'/3917L-2020-01-15-120420.txt');
-dat.pre2.(dat.ratIDs{10})=cat(2,dataPath,datafolders{10},'/3917L-2020-01-16-132652.txt');
+%dat.pre1.(dat.ratIDs{10})=cat(2,dataPath,datafolders{10},'/3917L-2020-01-15-120420.txt');
+%dat.pre2.(dat.ratIDs{10})=cat(2,dataPath,datafolders{10},'/3917L-2020-01-16-132652.txt');
 dat.pre3.(dat.ratIDs{10})=cat(2,dataPath,datafolders{10},'/3917L-2020-01-22-123551.txt');
 dat.pre4.(dat.ratIDs{10})=cat(2,dataPath,datafolders{10},'/3917L-2020-01-23-130438.txt');
 dat.pre5.(dat.ratIDs{10})=cat(2,dataPath,datafolders{10},'/3917L-2020-01-30-151838.txt');

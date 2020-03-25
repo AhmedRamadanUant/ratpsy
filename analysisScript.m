@@ -22,7 +22,7 @@ load data;
 %% POPULATION: ANALYSIS OF REACTION TIMES AND PREMATURE RESPONSES
 
 allDataPre=[];
-for pi={'pre1', 'pre2'}
+for pi={'pre4', 'pre5'}
     ratIDs=fieldnames(data.(pi{1}));
     for rat=[{ratIDs{:}}]
         allDataPre=cat(1,allDataPre,data.(pi{1}).(rat{1}));
@@ -30,7 +30,7 @@ for pi={'pre1', 'pre2'}
 end
 
 allDataPost=[];
-for pi={'post1', 'post2', 'post3'}
+for pi={'pre6', 'pre7'}
     ratIDs=fieldnames(data.(pi{1}));
     for rat=[{ratIDs{:}}]
         allDataPost=cat(1,allDataPost,data.(pi{1}).(rat{1}));
@@ -38,7 +38,7 @@ for pi={'post1', 'post2', 'post3'}
 end
 
 % separate each post timepoint
-for pi={'post1', 'post2', 'post3', 'post4', 'post5', 'post6', 'post7'}
+for pi={'pre6', 'pre7'}
     ratIDs=fieldnames(data.(pi{1}));
     dataPost.(pi{1})=[];
     for rat=[{ratIDs{:}}]
@@ -46,20 +46,24 @@ for pi={'post1', 'post2', 'post3', 'post4', 'post5', 'post6', 'post7'}
     end
 end
 
-save('data','allDataPre','allDataPost','dataPost','-append')
+save(fullfile(d.dataPath,'Analysis','data'),'allDataPre','allDataPost','dataPost','-append')
 
 % plot only the correct trials
-gk_plot_reactionTimes(allDataPre(allDataPre.correct==1,:), allDataPost(allDataPost.correct==1,:), {'pre','post'});
-gk_plot_prematureResp(allDataPre(allDataPre.correct==1,:), allDataPost(allDataPost.correct==1,:), {'pre','post'});
+gk_plot_reactionTimes(allDataPre(allDataPre.outcome=='correct',:), allDataPost(allDataPost.outcome=='correct',:), {'pre','post'},'RT_stim');
+gk_plot_reactionTimes(allDataPre(allDataPre.outcome=='correct',:), allDataPost(allDataPost.outcome=='correct',:), {'pre','post'},'RT_move');
+
+%gk_plot_prematureResp(allDataPre(allDataPre.correct==1,:), allDataPost(allDataPost.correct==1,:), {'pre','post'});
 % plot only the wrong trials
-gk_plot_reactionTimes(allDataPre(allDataPre.correct==0,:), allDataPost(allDataPost.correct==0,:), {'pre','post'});
-gk_plot_prematureResp(allDataPre(allDataPre.correct==0,:), allDataPost(allDataPost.correct==0,:), {'pre','post'});
+gk_plot_reactionTimes(allDataPre(allDataPre.outcome=='wrong',:), allDataPost(allDataPost.outcome=='wrong',:), {'pre','post'},'RT_stim');
+gk_plot_reactionTimes(allDataPre(allDataPre.outcome=='wrong',:), allDataPost(allDataPost.outcome=='wrong',:), {'pre','post'},'RT_move');
+
+%gk_plot_prematureResp(allDataPre(allDataPre.correct==0,:), allDataPost(allDataPost.correct==0,:), {'pre','post'});
 % plot all the trials to the left
-gk_plot_reactionTimes(allDataPre(allDataPre.response==1,:), allDataPost(allDataPost.response==1,:), {'pre','post'});
-gk_plot_prematureResp(allDataPre(allDataPre.response==1,:), allDataPost(allDataPost.response==1,:), {'pre','post'});
+%gk_plot_reactionTimes(allDataPre(allDataPre.response==1,:), allDataPost(allDataPost.response==1,:), {'pre','post'});
+%gk_plot_prematureResp(allDataPre(allDataPre.response==1,:), allDataPost(allDataPost.response==1,:), {'pre','post'});
 % plot all the trials to the right
-gk_plot_reactionTimes(allDataPre(allDataPre.response==2,:), allDataPost(allDataPost.response==2,:), {'pre','post'});
-gk_plot_prematureResp(allDataPre(allDataPre.response==2,:), allDataPost(allDataPost.response==2,:), {'pre','post'});
+%gk_plot_reactionTimes(allDataPre(allDataPre.response==2,:), allDataPost(allDataPost.response==2,:), {'pre','post'});
+%gk_plot_prematureResp(allDataPre(allDataPre.response==2,:), allDataPost(allDataPost.response==2,:), {'pre','post'});
 
 %% ANALYSIS RAT BY RAT
 for rat=1:6

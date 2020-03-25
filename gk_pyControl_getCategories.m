@@ -1,4 +1,4 @@
-function [valueCateg typeCateg] = gk_pyControl_getCategories(event, value_rename, type_rename)
+function [valueCateg typeCateg] = gk_pyControl_getCategories(event, value_rename, type_rename, verbose)
 % USAGE: [valueCateg typeCateg] = gk_pyControl_getCategories(event, [value_rename], [type_rename])
 %
 % INFO: this function will extract the value and type categories from
@@ -9,27 +9,35 @@ function [valueCateg typeCateg] = gk_pyControl_getCategories(event, value_rename
 % - event        : the event returned from gk_pyControl_collapse_events
 % - value_rename : a cell with new names for the value categories [opt]
 % - type_rename  : a cell with new names for the type categories [opt]
+% - verbose      : if true print categories
 %
 % OUTPUT:
 % - valueCatg : the value categories in a categorical variable
 % - typeCateg : the type categories in a categorical variable
 %
 % v1.0 GAK 4 Mar 2020
+if nargin<4
+    verbose=0;
+end
 
 
 val_tmp=categorical(event.values);
 if numel(categories(val_tmp))<20
-    fprintf('Value Orig Categories:\n');
-    cellfun(@(x) fprintf('\t%s\n',x),categories(val_tmp))
+    if verbose
+        fprintf('Value Orig Categories:\n');
+        cellfun(@(x) fprintf('\t%s\n',x),categories(val_tmp))
+    end
 else
-    fprintf('Value Orig Categories > 20 (not printed)\n');
+    if verbose; fprintf('Value Orig Categories > 20 (not printed)\n'); end
 end
 typ_tmp=categorical(event.types);
 if numel(categories(typ_tmp))<20
-    fprintf('Type Orig Categories:\n');
-    cellfun(@(x) fprintf('\t%s\n',x),categories(typ_tmp))
+    if verbose
+        fprintf('Type Orig Categories:\n');
+        cellfun(@(x) fprintf('\t%s\n',x),categories(typ_tmp))
+    end
 else
-    fprintf('Type Orig Categories > 20 (not printed)\n');
+    if verbose; fprintf('Type Orig Categories > 20 (not printed)\n'); end
 end
 if nargin==1 | isempty(value_rename)
     value_rename=categories(val_tmp);
